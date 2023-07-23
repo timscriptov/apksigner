@@ -67,7 +67,12 @@ class JKS : KeyStoreSpi() {
     }
 
     @Throws(KeyStoreException::class)
-    override fun engineSetKeyEntry(pAlias: String, key: Key, passwd: CharArray, certChain: Array<Certificate?>?) {
+    override fun engineSetKeyEntry(
+        pAlias: String,
+        key: Key,
+        passwd: CharArray,
+        certChain: Array<Certificate?>?
+    ) {
         val alias = pAlias.lowercase(Locale.getDefault())
         if (trustedCerts.containsKey(alias)) {
             throw KeyStoreException("\"$alias is a trusted certificate entry")
@@ -85,9 +90,15 @@ class JKS : KeyStoreSpi() {
     }
 
     @Throws(KeyStoreException::class)
-    override fun engineSetKeyEntry(pAlias: String, encodedKey: ByteArray, certChain: Array<Certificate?>?) {
+    override fun engineSetKeyEntry(
+        pAlias: String,
+        encodedKey: ByteArray,
+        certChain: Array<Certificate?>?
+    ) {
         val alias = pAlias.lowercase(Locale.getDefault())
-        if (trustedCerts.containsKey(alias)) throw KeyStoreException("\"$alias\" is a trusted certificate entry")
+        if (trustedCerts.containsKey(alias)) {
+            throw KeyStoreException("\"$alias\" is a trusted certificate entry")
+        }
         try {
             EncryptedPrivateKeyInfo(encodedKey)
         } catch (ioe: IOException) {
@@ -160,54 +171,53 @@ class JKS : KeyStoreSpi() {
             update(charsToBytes(passwd))
             update("Mighty Aphrodite".toByteArray(StandardCharsets.UTF_8))
         }.also { messageDigest ->
-            val dout = DataOutputStream(DigestOutputStream(out, messageDigest))
-            dout.writeInt(MAGIC)
-            dout.writeInt(2)
-            dout.writeInt(aliases.size)
-            val e = aliases.elements()
-            while (e.hasMoreElements()) {
-                val alias = e.nextElement()
-                if (trustedCerts.containsKey(alias)) {
-                    dout.writeInt(TRUSTED_CERT)
-                    dout.writeUTF(alias)
-                    dates[alias]?.let { date ->
-                        dout.writeLong(date.time)
-                    }
-                    trustedCerts[alias]?.let { cert ->
-                        writeCert(dout, cert)
-                    }
+            DataOutputStream(DigestOutputStream(out, messageDigest)).apply {
+                writeInt(MAGIC)
+                writeInt(2)
+                writeInt(aliases.size)
+            }.also { dataOutputStream ->
+                val e = aliases.elements()
+                while (e.hasMoreElements()) {
+                    val alias = e.nextElement()
+                    if (trustedCerts.containsKey(alias)) {
+                        dataOutputStream.writeInt(TRUSTED_CERT)
+                        dataOutputStream.writeUTF(alias)
+                        dates[alias]?.let { date ->
+                            dataOutputStream.writeLong(date.time)
+                        }
+                        trustedCerts[alias]?.let { cert ->
+                            writeCert(dataOutputStream, cert)
+                        }
 
-                } else {
-                    dout.writeInt(PRIVATE_KEY)
-                    dout.writeUTF(alias)
-                    dates[alias]?.let { date ->
-                        dout.writeLong(date.time)
-                    }
-                    privateKeys[alias]?.let { key ->
-                        dout.writeInt(key.size)
-                        dout.write(key)
-                    }
-                    certChains[alias]?.let { chain ->
-                        dout.writeInt(chain.size)
-                        for (certificate in chain) {
-                            certificate?.let {
-                                writeCert(dout, certificate)
+                    } else {
+                        dataOutputStream.writeInt(PRIVATE_KEY)
+                        dataOutputStream.writeUTF(alias)
+                        dates[alias]?.let { date ->
+                            dataOutputStream.writeLong(date.time)
+                        }
+                        privateKeys[alias]?.let { key ->
+                            dataOutputStream.writeInt(key.size)
+                            dataOutputStream.write(key)
+                        }
+                        certChains[alias]?.let { chain ->
+                            dataOutputStream.writeInt(chain.size)
+                            for (certificate in chain) {
+                                certificate?.let {
+                                    writeCert(dataOutputStream, certificate)
+                                }
                             }
                         }
                     }
                 }
+                dataOutputStream.write(messageDigest.digest())
             }
-            val digest = messageDigest.digest()
-            dout.write(digest)
         }
     }
 
     @Throws(IOException::class, NoSuchAlgorithmException::class, CertificateException::class)
-    override fun engineLoad(inputStream: InputStream?, passwd: CharArray?) {
+    override fun engineLoad(inputStream: InputStream?, passwd: CharArray) {
         MessageDigest.getInstance("SHA").apply {
-            passwd?.let {
-                update(charsToBytes(passwd))
-            }
+            update(charsToBytes(passwd))
             update("Mighty Aphrodite".toByteArray(StandardCharsets.UTF_8)) // HAR HAR
         }.also { messageDigest ->
             aliases.clear()
@@ -248,20 +258,17 @@ class JKS : KeyStoreSpi() {
                         }
                         certChains[alias] = chain
                     }
+
                     TRUSTED_CERT -> trustedCerts[alias] = readCert(din)
                     else -> throw LoadKeystoreException("Malformed key store")
                 }
             }
-            passwd?.let {
-                val computedHash = messageDigest.digest()
-                val storedHash = ByteArray(20)
-                din.read(storedHash)
-                if (!MessageDigest.isEqual(storedHash, computedHash)) {
-                    throw LoadKeystoreException("Incorrect password, or integrity check failed.")
-                }
+            val storedHash = ByteArray(20)
+            din.read(storedHash)
+            if (!MessageDigest.isEqual(storedHash, messageDigest.digest())) {
+                throw LoadKeystoreException("Incorrect password, or integrity check failed.")
             }
         }
-
     }
 
     companion object {
@@ -271,12 +278,10 @@ class JKS : KeyStoreSpi() {
 
         @Throws(IOException::class, CertificateException::class)
         private fun readCert(inputStream: DataInputStream): Certificate {
-            val type = inputStream.readUTF()
-            val len = inputStream.readInt()
-            val encoded = ByteArray(len)
+            val encoded = ByteArray(inputStream.readInt())
             inputStream.read(encoded)
-            val factory = CertificateFactory.getInstance(type)
-            return factory.generateCertificate(ByteArrayInputStream(encoded))
+            return CertificateFactory.getInstance(inputStream.readUTF())
+                .generateCertificate(ByteArrayInputStream(encoded))
         }
 
         @Throws(IOException::class, CertificateException::class)
@@ -290,8 +295,7 @@ class JKS : KeyStoreSpi() {
         @Throws(UnrecoverableKeyException::class)
         private fun decryptKey(encryptedPKI: ByteArray, passwd: ByteArray): ByteArray {
             return try {
-                val epki = EncryptedPrivateKeyInfo(encryptedPKI)
-                val encr = epki.encryptedData
+                val encr = EncryptedPrivateKeyInfo(encryptedPKI).encryptedData
                 val keystream = ByteArray(20)
                 System.arraycopy(encr, 0, keystream, 0, 20)
                 val check = ByteArray(20)
@@ -300,10 +304,12 @@ class JKS : KeyStoreSpi() {
                 val sha = MessageDigest.getInstance("SHA1")
                 var count = 0
                 while (count < key.size) {
-                    sha.reset()
-                    sha.update(passwd)
-                    sha.update(keystream)
-                    sha.digest(keystream, 0, keystream.size)
+                    sha.apply {
+                        reset()
+                        update(passwd)
+                        update(keystream)
+                        digest(keystream, 0, keystream.size)
+                    }
                     var i = 0
                     while (i < keystream.size && count < key.size) {
                         key[count] = (keystream[i] xor encr[count + 20])
@@ -311,9 +317,11 @@ class JKS : KeyStoreSpi() {
                         i++
                     }
                 }
-                sha.reset()
-                sha.update(passwd)
-                sha.update(key)
+                sha.apply {
+                    reset()
+                    update(passwd)
+                    update(key)
+                }
                 if (!MessageDigest.isEqual(check, sha.digest())) {
                     throw UnrecoverableKeyException("checksum mismatch")
                 }
@@ -333,10 +341,12 @@ class JKS : KeyStoreSpi() {
                 System.arraycopy(keyStream, 0, encrypted, 0, 20)
                 var count = 0
                 while (count < k.size) {
-                    sha.reset()
-                    sha.update(passwd)
-                    sha.update(keyStream)
-                    sha.digest(keyStream, 0, keyStream.size)
+                    sha.apply {
+                        reset()
+                        update(passwd)
+                        update(keyStream)
+                        digest(keyStream, 0, keyStream.size)
+                    }
                     var i = 0
                     while (i < keyStream.size && count < k.size) {
                         encrypted[count + 20] = (keyStream[i] xor k[count])
@@ -344,10 +354,12 @@ class JKS : KeyStoreSpi() {
                         i++
                     }
                 }
-                sha.reset()
-                sha.update(passwd)
-                sha.update(k)
-                sha.digest(encrypted, encrypted.size - 20, 20)
+                sha.apply {
+                    reset()
+                    update(passwd)
+                    update(k)
+                    digest(encrypted, encrypted.size - 20, 20)
+                }
                 EncryptedPrivateKeyInfo("1.3.6.1.4.1.42.2.17.1.1", encrypted).encoded
             } catch (x: Exception) {
                 throw KeyStoreException(x.message)
@@ -368,5 +380,3 @@ class JKS : KeyStoreSpi() {
         }
     }
 }
-
-class LoadKeystoreException(message: String?) : IOException(message)
