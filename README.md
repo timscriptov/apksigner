@@ -10,6 +10,7 @@
     }
 ```
 
+## Add the dependency
 ```groovy
     dependencies {
         implementation 'com.github.TimScriptov:apksigner:Tag'
