@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <Button
+                android:id="@+id/select_apk"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Apk" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <Button
+                android:id="@+id/select_jks_key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select key.jks" />
+
+            <EditText
+                android:id="@+id/cert_pass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Cert Password" />
+
+            <EditText
+                android:id="@+id/cert_alias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Alias" />
+
+            <EditText
+                android:id="@+id/key_pass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Key Password" />
+
+            <Button
+                android:id="@+id/sign_apk_with_jks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="Sign Apk" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <Button
+                android:id="@+id/select_pk8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select key.pk8" />
+
+            <Button
+                android:id="@+id/select_x509"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select key.x509.pem" />
+
+            <Button
+                android:id="@+id/sign_apk_with_pem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="Sign Apk" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

@@ -1,4 +1,4 @@
-package com.mcal.zip;
+package com.mcal.apksigner;
 
 import android.content.Context;
 

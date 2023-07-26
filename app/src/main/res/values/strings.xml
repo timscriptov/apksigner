@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">zip</string>
+    <string name="app_name">ApkSigner</string>
+    <string name="signing">Signing…</string>
 </resources>
