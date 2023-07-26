@@ -1,6 +1,6 @@
 package com.mcal.apksigner
 
-import com.mcal.apksigner.utils.KeyStoreHelper
+import com.mcal.apksigner.utils.KeyStoreFileManager
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -11,7 +11,7 @@ object JksToPem {
     fun convert(jksFile: File, jksPassword: String, pk8File: File, pemFile: File): Boolean {
         return try {
             val jksInputStream = FileInputStream(jksFile)
-            val keyStore = KeyStoreHelper.loadJks(jksInputStream, jksPassword.toCharArray())
+            val keyStore = KeyStoreFileManager.loadKeyStore(jksFile.path, jksPassword.toCharArray())
             jksInputStream.close()
 
             val alias = keyStore.aliases().nextElement()
