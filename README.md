@@ -17,9 +17,6 @@
     }
 ```
 
-## TODO
-Android 12+ not support JKS by Oracle. Google recommended use BKS
-
 ## Sign apk with pk8 and x509.pem
 ```kotlin
     ApkSigner.sign(File("path/unsigned_apk.apk"), File("path/signed_apk.apk"), File("path/key.pk8"), File("path/key.x509.pem"))

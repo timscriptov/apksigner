@@ -1,31 +1,39 @@
 package com.mcal.apksigner.utils
 
+import org.spongycastle.jce.provider.BouncyCastleProvider
 import java.io.File
 import java.io.FileInputStream
 import java.security.KeyStore
+import java.security.Security
 
 object KeyStoreHelper {
-    /**
-     * TODO: JKS removed in Android 12+
-     */
     @JvmStatic
     @Throws(Exception::class)
     fun loadJks(keyFile: File, password: CharArray): KeyStore {
         return loadJks(FileInputStream(keyFile), password)
     }
 
-    /**
-     * TODO: JKS removed in Android 12+
-     */
     @JvmStatic
     @Throws(Exception::class)
     fun loadJks(inputStream: FileInputStream, password: CharArray): KeyStore {
-        val keyStore: KeyStore
+        var keyStore: KeyStore
         try {
             keyStore = KeyStore.getInstance("JKS")
             keyStore.load(inputStream, password)
         } catch (e: Exception) {
-            throw RuntimeException("Failed to load keystore: " + e.message)
+            val provider = BouncyCastleProvider()
+            Security.addProvider(provider)
+            try {
+                keyStore = JksKeyStore(provider)
+                keyStore.load(inputStream, password)
+            } catch (e: Exception) {
+                try {
+                    keyStore = KeyStore.getInstance("BKS", provider)
+                    keyStore.load(inputStream, password)
+                } catch (e: Exception) {
+                    throw RuntimeException("Failed to load keystore: " + e.message)
+                }
+            }
         } finally {
             inputStream.close()
         }
@@ -35,17 +43,7 @@ object KeyStoreHelper {
     @JvmStatic
     @Throws(Exception::class)
     fun loadBks(keyFile: File, password: CharArray): KeyStore {
-        val inputStream = FileInputStream(keyFile)
-        val keyStore: KeyStore
-        try {
-            keyStore = KeyStore.getInstance("BKS")
-            keyStore.load(inputStream, password)
-        } catch (e: Exception) {
-            throw RuntimeException("Failed to load keystore: " + e.message)
-        } finally {
-            inputStream.close()
-        }
-        return keyStore
+        return loadBks(FileInputStream(keyFile), password)
     }
 
     @JvmStatic
