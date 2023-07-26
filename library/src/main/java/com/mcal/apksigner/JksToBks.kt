@@ -1,35 +1,34 @@
 package com.mcal.apksigner
 
-import org.spongycastle.jce.provider.BouncyCastleProvider
+import com.mcal.apksigner.utils.KeyStoreHelper
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.security.KeyStore
-import java.security.Security
 
 object JksToBks {
-    fun convert(jksFile: File, bksFile: File, jksPassword: String, bksPassword: String) {
-        Security.addProvider(BouncyCastleProvider())
+    @JvmStatic
+    fun convert(jksFile: File, bksFile: File, jksPassword: String, bksPassword: String): Boolean {
+        return try {
+            val jksInputStream = FileInputStream(jksFile)
+            val jksKeyStore = KeyStoreHelper.loadJks(jksInputStream, jksPassword.toCharArray())
+            jksInputStream.close()
 
-        val jksInputStream = FileInputStream(jksFile)
-        val jksKeyStore = KeyStore.getInstance("JKS")
-        jksKeyStore.load(jksInputStream, jksPassword.toCharArray())
-        jksInputStream.close()
+            val bksKeyStore = KeyStoreHelper.loadBks(null, bksPassword.toCharArray(), "BC")
+            val aliases = jksKeyStore.aliases()
+            while (aliases.hasMoreElements()) {
+                val alias = aliases.nextElement()
+                val key = jksKeyStore.getKey(alias, jksPassword.toCharArray())
+                val chain = jksKeyStore.getCertificateChain(alias)
+                bksKeyStore.setKeyEntry(alias, key, bksPassword.toCharArray(), chain)
+            }
 
-        val bksOutputStream = FileOutputStream(bksFile)
-        val bksKeyStore = KeyStore.getInstance("BKS", "BC")
-        bksKeyStore.load(null, bksPassword.toCharArray())
-
-        val aliases = jksKeyStore.aliases()
-        while (aliases.hasMoreElements()) {
-            val alias = aliases.nextElement()
-            val key = jksKeyStore.getKey(alias, jksPassword.toCharArray())
-            val chain = jksKeyStore.getCertificateChain(alias)
-
-            bksKeyStore.setKeyEntry(alias, key, bksPassword.toCharArray(), chain)
+            val bksOutputStream = FileOutputStream(bksFile)
+            bksKeyStore.store(bksOutputStream, bksPassword.toCharArray())
+            bksOutputStream.close()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
-
-        bksKeyStore.store(bksOutputStream, bksPassword.toCharArray())
-        bksOutputStream.close()
     }
 }

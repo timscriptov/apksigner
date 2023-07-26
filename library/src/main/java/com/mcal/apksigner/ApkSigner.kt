@@ -2,12 +2,9 @@ package com.mcal.apksigner
 
 import com.android.apksig.ApkSigner
 import com.android.apksigner.ApkSignerTool
-import org.spongycastle.jce.provider.BouncyCastleProvider
+import com.mcal.apksigner.utils.KeyStoreHelper
 import java.io.File
-import java.io.FileInputStream
-import java.security.KeyStore
 import java.security.PrivateKey
-import java.security.Security
 import java.security.cert.X509Certificate
 
 object ApkSigner {
@@ -91,7 +88,7 @@ object ApkSigner {
         keyPass: String,
     ): Boolean {
         return try {
-            val keystore = loadKeyStore(keyFile, certPass.toCharArray())
+            val keystore = KeyStoreHelper.loadJks(keyFile, certPass.toCharArray())
             ApkSigner.Builder(
                 listOf(
                     ApkSigner.SignerConfig.Builder(
@@ -125,7 +122,7 @@ object ApkSigner {
         v4SigningEnabled: Boolean,
     ): Boolean {
         return try {
-            val keystore = loadKeyStore(keyFile, certPass.toCharArray())
+            val keystore = KeyStoreHelper.loadJks(keyFile, certPass.toCharArray())
             ApkSigner.Builder(
                 listOf(
                     ApkSigner.SignerConfig.Builder(
@@ -147,24 +144,5 @@ object ApkSigner {
             e.printStackTrace()
             false
         }
-    }
-
-    /**
-     * TODO: JKS removed in Android 12+
-     */
-    @Throws(Exception::class)
-    private fun loadKeyStore(keyFile: File, password: CharArray): KeyStore {
-        val inputStream = FileInputStream(keyFile)
-        val keyStore: KeyStore
-        try {
-            Security.addProvider(BouncyCastleProvider())
-            keyStore = KeyStore.getInstance("JKS", "SC")
-            keyStore.load(inputStream, password)
-        } catch (e: Exception) {
-            throw RuntimeException("Failed to load keystore: " + e.message)
-        } finally {
-            inputStream.close()
-        }
-        return keyStore
     }
 }

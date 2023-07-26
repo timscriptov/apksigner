@@ -64,3 +64,12 @@ Android 12+ not support JKS by Oracle. Google recommended use BKS
 ```java
     JksToBks.convert(new File("path/key.jks"), new File("path/key.bks"), "jks_password", "bks_password");
 ```
+
+## Convert jks to pk8 and x509.pem
+```kotlin
+    JksToPem.convert(File("path/key.jks"),"jks_password", File("path/key.pk8"), File("path/key.x509.pem"))
+```
+
+```java
+    JksToPem.convert(new File("path/key.jks"),"jks_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
+```
