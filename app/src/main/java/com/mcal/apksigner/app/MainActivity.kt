@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mcal.apksigner.ApkSigner
+import com.mcal.apksigner.JksToBks
+import com.mcal.apksigner.JksToPem
 import com.mcal.apksigner.app.databinding.ActivityMainBinding
 import com.mcal.apksigner.app.filepicker.FilePickHelper
 import kotlinx.coroutines.CoroutineScope
@@ -98,6 +100,8 @@ class MainActivity : AppCompatActivity() {
                         }
                         inputStream.close()
                         binding.selectJksKey.text = name
+                        setEnabled(binding.jksToBks, true)
+                        setEnabled(binding.jksToPk8AndX509, true)
                     }
                 }
             }
@@ -119,6 +123,10 @@ class MainActivity : AppCompatActivity() {
         binding.selectJksKey.setOnClickListener {
             pickJks.launch(FilePickHelper.pickFile(false))
         }
+        val v1View = binding.v1SigningEnabled
+        val v2View = binding.v2SigningEnabled
+        val v3View = binding.v3SigningEnabled
+        val v4View = binding.v4SigningEnabled
         binding.signApkWithJks.setOnClickListener { view ->
             setEnabled(view, false)
             val apk = apkFile
@@ -141,7 +149,11 @@ class MainActivity : AppCompatActivity() {
                                         jks,
                                         certPass,
                                         certAlias,
-                                        keyPass
+                                        keyPass,
+                                        v1View.isChecked,
+                                        v2View.isChecked,
+                                        v3View.isChecked,
+                                        v4View.isChecked,
                                     )
                                     withContext(Dispatchers.Main) {
                                         dialog.dismiss()
@@ -165,6 +177,44 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please select APK File!", Toast.LENGTH_SHORT).show()
             }
         }
+        binding.jksToBks.setOnClickListener {
+            val jks = jksFile
+            if (jks != null && jks.exists()) {
+                val keyPass = binding.keyPass.text.toString().trim()
+                if (keyPass.isNotEmpty()) {
+                    JksToBks.convert(
+                        jks,
+                        File(getExternalFilesDir(null), jks.name + ".bks"),
+                        keyPass,
+                        keyPass
+                    )
+                } else {
+                    Toast.makeText(this, "Enter key password!", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else {
+                Toast.makeText(this, "Please select JKS keystore!", Toast.LENGTH_SHORT).show()
+            }
+        }
+        binding.jksToPk8AndX509.setOnClickListener {
+            val jks = jksFile
+            if (jks != null && jks.exists()) {
+                val keyPass = binding.keyPass.text.toString().trim()
+                if (keyPass.isNotEmpty()) {
+                    JksToPem.convert(
+                        jks,
+                        keyPass,
+                        File(getExternalFilesDir(null), jks.name + ".pk8"),
+                        File(getExternalFilesDir(null), jks.name + ".x509.pem"),
+                    )
+                } else {
+                    Toast.makeText(this, "Enter key password!", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else {
+                Toast.makeText(this, "Please select JKS keystore!", Toast.LENGTH_SHORT).show()
+            }
+        }
         binding.signApkWithPem.setOnClickListener { view ->
             setEnabled(view, false)
             val apk = apkFile
@@ -181,7 +231,11 @@ class MainActivity : AppCompatActivity() {
                                 apk,
                                 File(getExternalFilesDir(null), "app_signed.apk"),
                                 pk8,
-                                x509
+                                x509,
+                                v1View.isChecked,
+                                v2View.isChecked,
+                                v3View.isChecked,
+                                v4View.isChecked,
                             )
                             withContext(Dispatchers.Main) {
                                 dialog.dismiss()

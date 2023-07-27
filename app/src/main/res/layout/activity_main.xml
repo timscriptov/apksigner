@@ -1,108 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
 
-            <Button
-                android:id="@+id/select_apk"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Select Apk" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-        </LinearLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/select_apk"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_apk" />
 
-    </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp">
+        </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
 
-            <Button
-                android:id="@+id/select_jks_key"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select key.jks" />
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/cert_pass"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Cert Password" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
 
-            <EditText
-                android:id="@+id/cert_alias"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Alias" />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/signature_scheme_v1" />
 
-            <EditText
-                android:id="@+id/key_pass"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Key Password" />
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/v1_signing_enabled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
 
-            <Button
-                android:id="@+id/sign_apk_with_jks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="false"
-                android:text="Sign Apk" />
+                </LinearLayout>
 
-        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
 
-    </com.google.android.material.card.MaterialCardView>
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/signature_scheme_v2" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp">
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/v2_signing_enabled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
 
-        <LinearLayout
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/signature_scheme_v3" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/v3_signing_enabled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/signature_scheme_v4" />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/v4_signing_enabled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
 
-            <Button
-                android:id="@+id/select_pk8"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Select key.pk8" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-            <Button
-                android:id="@+id/select_x509"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/select_jks_key"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_key_jks" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/cert_pass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/cert_password" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/cert_alias"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/alias" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/key_pass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/key_password" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/jks_to_bks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:text="@string/convert_to_bks" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/jks_to_pk8_and_x509"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:text="@string/convert_to_pk8_x509_pem" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/sign_apk_with_jks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:text="@string/sign_apk" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Select key.x509.pem" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-            <Button
-                android:id="@+id/sign_apk_with_pem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:enabled="false"
-                android:text="Sign Apk" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/select_pk8"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_key_pk8" />
 
-        </LinearLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/select_x509"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/select_key_x509_pem" />
 
-    </com.google.android.material.card.MaterialCardView>
 
-</LinearLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/sign_apk_with_pem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:text="@string/sign_apk" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+</ScrollView>
