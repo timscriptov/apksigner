@@ -8,24 +8,55 @@ import java.security.KeyStore
 
 object JksToBks {
     @JvmStatic
-    fun convert(jksFile: File, bksFile: File, jksPassword: String, bksPassword: String): Boolean {
+    fun convert(
+        jksFile: File,
+        bksFile: File,
+        password: String,
+        alias: String,
+        aliasPassword: String
+    ): Boolean {
         return try {
             val jksInputStream = FileInputStream(jksFile)
             val jksKeyStore =
-                KeyStoreFileManager.loadKeyStore(jksFile.path, jksPassword.toCharArray())
+                KeyStoreFileManager.loadKeyStore(jksFile.path, password.toCharArray())
             jksInputStream.close()
 
-            val bksKeyStore = loadBks(bksPassword.toCharArray())
-            val aliases = jksKeyStore.aliases()
-            while (aliases.hasMoreElements()) {
-                val alias = aliases.nextElement()
-                val key = jksKeyStore.getKey(alias, jksPassword.toCharArray())
-                val chain = jksKeyStore.getCertificateChain(alias)
-                bksKeyStore.setKeyEntry(alias, key, bksPassword.toCharArray(), chain)
-            }
+            val bksKeyStore = loadBks(/* new password */password.toCharArray())
+            val key = jksKeyStore.getKey(alias, aliasPassword.toCharArray())
+            val chain = jksKeyStore.getCertificateChain(alias)
+            bksKeyStore.setKeyEntry(alias, key, /* new password */password.toCharArray(), chain)
 
             val bksOutputStream = FileOutputStream(bksFile)
-            bksKeyStore.store(bksOutputStream, bksPassword.toCharArray())
+            bksKeyStore.store(bksOutputStream, /* new password */password.toCharArray())
+            bksOutputStream.close()
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    @JvmStatic
+    fun convert(
+        jksFile: File,
+        bksFile: File,
+        password: String,
+        aliasPassword: String
+    ): Boolean {
+        return try {
+            val jksInputStream = FileInputStream(jksFile)
+            val jksKeyStore =
+                KeyStoreFileManager.loadKeyStore(jksFile.path, password.toCharArray())
+            jksInputStream.close()
+
+            val bksKeyStore = loadBks(/* new password */password.toCharArray())
+            val alias = jksKeyStore.aliases().nextElement()
+            val key = jksKeyStore.getKey(alias, aliasPassword.toCharArray())
+            val chain = jksKeyStore.getCertificateChain(alias)
+            bksKeyStore.setKeyEntry(alias, key, /* new password */password.toCharArray(), chain)
+
+            val bksOutputStream = FileOutputStream(bksFile)
+            bksKeyStore.store(bksOutputStream, /* new password */password.toCharArray())
             bksOutputStream.close()
             true
         } catch (e: Exception) {

@@ -55,18 +55,22 @@
 
 ## Convert jks to bks
 ```kotlin
-    JksToBks.convert(File("path/key.jks"), File("path/key.bks"), "jks_password", "bks_password")
+    JksToBks.convert(File("path/key.jks"), File("path/key.bks"), "password", "alias_password")
+    JksToBks.convert(File("path/key.jks"), File("path/key.bks"), "password", "alias", "alias_password")
 ```
 
 ```java
-    JksToBks.convert(new File("path/key.jks"), new File("path/key.bks"), "jks_password", "bks_password");
+    JksToBks.convert(new File("path/key.jks"), new File("path/key.bks"), "password", "alias_password");
+    JksToBks.convert(new File("path/key.jks"), new File("path/key.bks"), "password", "alias", "alias_password");
 ```
 
 ## Convert jks to pk8 and x509.pem
 ```kotlin
-    JksToPem.convert(File("path/key.jks"),"jks_password", File("path/key.pk8"), File("path/key.x509.pem"))
+    JksToPem.convert(File("path/key.jks"), "password", "alias_password", File("path/key.pk8"), File("path/key.x509.pem"))
+    JksToPem.convert(File("path/key.jks"), "password", "alias", "alias_password", File("path/key.pk8"), File("path/key.x509.pem"))
 ```
 
 ```java
-    JksToPem.convert(new File("path/key.jks"),"jks_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
+    JksToPem.convert(new File("path/key.jks"), "password", "alias_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
+    JksToPem.convert(new File("path/key.jks"), "password", "alias", "alias_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
 ```

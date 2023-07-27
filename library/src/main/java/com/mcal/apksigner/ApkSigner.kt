@@ -79,18 +79,18 @@ object ApkSigner {
         unsignedApkFile: File,
         signedApkFile: File,
         keyFile: File,
-        certPass: String,
-        certAlias: String,
-        keyPass: String,
+        password: String,
+        alias: String,
+        aliasPassword: String,
     ): Boolean {
         return try {
-            val keystore = KeyStoreFileManager.loadKeyStore(keyFile.path, certPass.toCharArray())
+            val keystore = KeyStoreFileManager.loadKeyStore(keyFile.path, password.toCharArray())
             ApkSigner.Builder(
                 listOf(
                     ApkSigner.SignerConfig.Builder(
                         "CERT",
-                        keystore.getKey(certAlias, keyPass.toCharArray()) as PrivateKey,
-                        listOf(keystore.getCertificate(certAlias) as X509Certificate)
+                        keystore.getKey(alias, aliasPassword.toCharArray()) as PrivateKey,
+                        listOf(keystore.getCertificate(alias) as X509Certificate)
                     ).build()
                 )
             ).apply {
@@ -109,22 +109,22 @@ object ApkSigner {
         unsignedApkFile: File,
         signedApkFile: File,
         keyFile: File,
-        certPass: String,
-        certAlias: String,
-        keyPass: String,
+        password: String,
+        alias: String,
+        aliasPassword: String,
         v1SigningEnabled: Boolean,
         v2SigningEnabled: Boolean,
         v3SigningEnabled: Boolean,
         v4SigningEnabled: Boolean,
     ): Boolean {
         return try {
-            val keystore = KeyStoreFileManager.loadKeyStore(keyFile.path, certPass.toCharArray())
+            val keystore = KeyStoreFileManager.loadKeyStore(keyFile.path, password.toCharArray())
             ApkSigner.Builder(
                 listOf(
                     ApkSigner.SignerConfig.Builder(
                         "CERT",
-                        keystore.getKey(certAlias, keyPass.toCharArray()) as PrivateKey,
-                        listOf(keystore.getCertificate(certAlias) as X509Certificate)
+                        keystore.getKey(alias, aliasPassword.toCharArray()) as PrivateKey,
+                        listOf(keystore.getCertificate(alias) as X509Certificate)
                     ).build()
                 )
             ).apply {

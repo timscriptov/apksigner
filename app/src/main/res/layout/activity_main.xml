@@ -139,22 +139,22 @@
                     android:text="@string/select_key_jks" />
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/cert_pass"
+                    android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/cert_password" />
+                    android:hint="@string/password" />
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/cert_alias"
+                    android:id="@+id/alias"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/alias" />
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/key_pass"
+                    android:id="@+id/alias_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/key_password" />
+                    android:hint="@string/alias_password" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/jks_to_bks"

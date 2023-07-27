@@ -133,12 +133,12 @@ class MainActivity : AppCompatActivity() {
             if (apk != null && apk.exists()) {
                 val jks = jksFile
                 if (jks != null && jks.exists()) {
-                    val certPass = binding.certPass.text.toString().trim()
-                    if (certPass.isNotEmpty()) {
-                        val certAlias = binding.certAlias.text.toString().trim()
-                        if (certAlias.isNotEmpty()) {
-                            val keyPass = binding.keyPass.text.toString().trim()
-                            if (keyPass.isNotEmpty()) {
+                    val password = binding.password.text.toString().trim()
+                    if (password.isNotEmpty()) {
+                        val alias = binding.alias.text.toString().trim()
+                        if (alias.isNotEmpty()) {
+                            val aliasPassword = binding.aliasPassword.text.toString().trim()
+                            if (aliasPassword.isNotEmpty()) {
                                 val dialog = dialog().apply {
                                     show()
                                 }
@@ -147,9 +147,9 @@ class MainActivity : AppCompatActivity() {
                                         apk,
                                         File(getExternalFilesDir(null), "app_signed.apk"),
                                         jks,
-                                        certPass,
-                                        certAlias,
-                                        keyPass,
+                                        password,
+                                        alias,
+                                        aliasPassword,
                                         v1View.isChecked,
                                         v2View.isChecked,
                                         v3View.isChecked,
@@ -161,14 +161,14 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 }
                             } else {
-                                Toast.makeText(this, "Enter key password!", Toast.LENGTH_SHORT)
+                                Toast.makeText(this, "Enter alias password!", Toast.LENGTH_SHORT)
                                     .show()
                             }
                         } else {
-                            Toast.makeText(this, "Enter cert alias!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Enter alias!", Toast.LENGTH_SHORT).show()
                         }
                     } else {
-                        Toast.makeText(this, "Enter cert password!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Enter password!", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(this, "Please select JKS keystore!", Toast.LENGTH_SHORT).show()
@@ -180,16 +180,16 @@ class MainActivity : AppCompatActivity() {
         binding.jksToBks.setOnClickListener {
             val jks = jksFile
             if (jks != null && jks.exists()) {
-                val keyPass = binding.keyPass.text.toString().trim()
-                if (keyPass.isNotEmpty()) {
+                val aliasPassword = binding.aliasPassword.text.toString().trim()
+                if (aliasPassword.isNotEmpty()) {
                     JksToBks.convert(
                         jks,
                         File(getExternalFilesDir(null), jks.name + ".bks"),
-                        keyPass,
-                        keyPass
+                        aliasPassword,
+                        aliasPassword
                     )
                 } else {
-                    Toast.makeText(this, "Enter key password!", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "Enter alias password!", Toast.LENGTH_SHORT)
                         .show()
                 }
             } else {
@@ -199,16 +199,23 @@ class MainActivity : AppCompatActivity() {
         binding.jksToPk8AndX509.setOnClickListener {
             val jks = jksFile
             if (jks != null && jks.exists()) {
-                val keyPass = binding.keyPass.text.toString().trim()
-                if (keyPass.isNotEmpty()) {
-                    JksToPem.convert(
-                        jks,
-                        keyPass,
-                        File(getExternalFilesDir(null), jks.name + ".pk8"),
-                        File(getExternalFilesDir(null), jks.name + ".x509.pem"),
-                    )
+                val password = binding.password.text.toString().trim()
+                if (password.isNotEmpty()) {
+                    val aliasPassword = binding.aliasPassword.text.toString().trim()
+                    if (aliasPassword.isNotEmpty()) {
+                        JksToPem.convert(
+                            jks,
+                            password,
+                            aliasPassword,
+                            File(getExternalFilesDir(null), jks.name + ".pk8"),
+                            File(getExternalFilesDir(null), jks.name + ".x509.pem"),
+                        )
+                    } else {
+                        Toast.makeText(this, "Enter alias password!", Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 } else {
-                    Toast.makeText(this, "Enter key password!", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "Enter password!", Toast.LENGTH_SHORT)
                         .show()
                 }
             } else {
