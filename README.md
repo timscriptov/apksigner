@@ -60,3 +60,12 @@
     JksToPem.convert(new File("path/key.jks"), "password", "alias_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
     JksToPem.convert(new File("path/key.jks"), "password", "alias", "alias_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
 ```
+
+## Create keystore
+```kotlin
+    CertCreator.createKeystoreAndKey("path/key.jks", "password", "alias", DistinguishedNameValues())
+```
+
+```java
+    CertCreator.createKeystoreAndKey("path/key.jks", "password", "alias", new DistinguishedNameValues());
+```

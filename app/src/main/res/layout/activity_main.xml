@@ -216,6 +216,81 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/new_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/password" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/new_alias"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/alias" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/common_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Your name" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/organizational_unit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Department/Unit" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/organization"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Company/Organization" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/street"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Street Address" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/locality"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="City/Locality" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="State/Province" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/country"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Country code" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/create_key"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Create" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
     </LinearLayout>
 
 </ScrollView>

@@ -13,10 +13,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mcal.apksigner.ApkSigner
+import com.mcal.apksigner.CertCreator
 import com.mcal.apksigner.JksToBks
 import com.mcal.apksigner.JksToPem
 import com.mcal.apksigner.app.databinding.ActivityMainBinding
 import com.mcal.apksigner.app.filepicker.FilePickHelper
+import com.mcal.apksigner.utils.DistinguishedNameValues
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -123,10 +125,99 @@ class MainActivity : AppCompatActivity() {
         binding.selectJksKey.setOnClickListener {
             pickJks.launch(FilePickHelper.pickFile(false))
         }
-        val v1View = binding.v1SigningEnabled
-        val v2View = binding.v2SigningEnabled
-        val v3View = binding.v3SigningEnabled
-        val v4View = binding.v4SigningEnabled
+        jks2bks()
+        jks2pem()
+        signApkWithJks()
+        signApkWithPem()
+        createKey()
+    }
+
+    private fun createKey() {
+        binding.createKey.setOnClickListener {
+            val password = binding.newPassword.text.toString().trim()
+            if (password.isNotEmpty()) {
+                val alias = binding.newAlias.text.toString().trim()
+                if (alias.isNotEmpty()) {
+                    val country = binding.country.text.toString().trim()
+                    if (country.isNotEmpty()) {
+                        val state = binding.state.text.toString().trim()
+                        if (state.isNotEmpty()) {
+                            val locality = binding.locality.text.toString().trim()
+                            if (locality.isNotEmpty()) {
+                                val street = binding.street.text.toString().trim()
+                                if (street.isNotEmpty()) {
+                                    val organization = binding.organization.text.toString().trim()
+                                    if (organization.isNotEmpty()) {
+                                        val organizationalUnit =
+                                            binding.organizationalUnit.text.toString().trim()
+                                        if (organizationalUnit.isNotEmpty()) {
+                                            val commonName =
+                                                binding.commonName.text.toString().trim()
+                                            if (commonName.isNotEmpty()) {
+                                                CertCreator.createKeystoreAndKey(
+                                                    File(
+                                                        getExternalFilesDir(null),
+                                                        "$alias.jks"
+                                                    ).path,
+                                                    password.toCharArray(),
+                                                    alias,
+                                                    DistinguishedNameValues().apply {
+                                                        setCountry(country)
+                                                        setState(state)
+                                                        setLocality(locality)
+                                                        setStreet(street)
+                                                        setOrganization(organization)
+                                                        setOrganizationalUnit(organizationalUnit)
+                                                        setCommonName(commonName)
+                                                    })
+                                            } else {
+                                                Toast.makeText(
+                                                    this,
+                                                    "Enter Name!",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        } else {
+                                            Toast.makeText(
+                                                this,
+                                                "Enter Department/Unit!",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    } else {
+                                        Toast.makeText(
+                                            this,
+                                            "Enter Company/Organization!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                } else {
+                                    Toast.makeText(
+                                        this,
+                                        "Enter Street Address!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else {
+                                Toast.makeText(this, "Enter City/Locality!", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        } else {
+                            Toast.makeText(this, "Enter State/Province!", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this, "Enter Country code!", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "Enter Alias!", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "Enter Password!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun signApkWithJks() {
         binding.signApkWithJks.setOnClickListener { view ->
             setEnabled(view, false)
             val apk = apkFile
@@ -150,10 +241,10 @@ class MainActivity : AppCompatActivity() {
                                         password,
                                         alias,
                                         aliasPassword,
-                                        v1View.isChecked,
-                                        v2View.isChecked,
-                                        v3View.isChecked,
-                                        v4View.isChecked,
+                                        binding.v1SigningEnabled.isChecked,
+                                        binding.v2SigningEnabled.isChecked,
+                                        binding.v3SigningEnabled.isChecked,
+                                        binding.v4SigningEnabled.isChecked,
                                     )
                                     withContext(Dispatchers.Main) {
                                         dialog.dismiss()
@@ -161,22 +252,25 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 }
                             } else {
-                                Toast.makeText(this, "Enter alias password!", Toast.LENGTH_SHORT)
+                                Toast.makeText(this, "Enter Alias Password!", Toast.LENGTH_SHORT)
                                     .show()
                             }
                         } else {
-                            Toast.makeText(this, "Enter alias!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Enter Alias!", Toast.LENGTH_SHORT).show()
                         }
                     } else {
-                        Toast.makeText(this, "Enter password!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Enter Password!", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this, "Please select JKS keystore!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Please select JKS Keystore!", Toast.LENGTH_SHORT).show()
                 }
             } else {
                 Toast.makeText(this, "Please select APK File!", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun jks2bks() {
         binding.jksToBks.setOnClickListener {
             val jks = jksFile
             if (jks != null && jks.exists()) {
@@ -189,39 +283,16 @@ class MainActivity : AppCompatActivity() {
                         aliasPassword
                     )
                 } else {
-                    Toast.makeText(this, "Enter alias password!", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "Enter Alias Password!", Toast.LENGTH_SHORT)
                         .show()
                 }
             } else {
-                Toast.makeText(this, "Please select JKS keystore!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please select JKS Keystore!", Toast.LENGTH_SHORT).show()
             }
         }
-        binding.jksToPk8AndX509.setOnClickListener {
-            val jks = jksFile
-            if (jks != null && jks.exists()) {
-                val password = binding.password.text.toString().trim()
-                if (password.isNotEmpty()) {
-                    val aliasPassword = binding.aliasPassword.text.toString().trim()
-                    if (aliasPassword.isNotEmpty()) {
-                        JksToPem.convert(
-                            jks,
-                            password,
-                            aliasPassword,
-                            File(getExternalFilesDir(null), jks.name + ".pk8"),
-                            File(getExternalFilesDir(null), jks.name + ".x509.pem"),
-                        )
-                    } else {
-                        Toast.makeText(this, "Enter alias password!", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                } else {
-                    Toast.makeText(this, "Enter password!", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            } else {
-                Toast.makeText(this, "Please select JKS keystore!", Toast.LENGTH_SHORT).show()
-            }
-        }
+    }
+
+    private fun signApkWithPem() {
         binding.signApkWithPem.setOnClickListener { view ->
             setEnabled(view, false)
             val apk = apkFile
@@ -239,10 +310,10 @@ class MainActivity : AppCompatActivity() {
                                 File(getExternalFilesDir(null), "app_signed.apk"),
                                 pk8,
                                 x509,
-                                v1View.isChecked,
-                                v2View.isChecked,
-                                v3View.isChecked,
-                                v4View.isChecked,
+                                binding.v1SigningEnabled.isChecked,
+                                binding.v2SigningEnabled.isChecked,
+                                binding.v3SigningEnabled.isChecked,
+                                binding.v4SigningEnabled.isChecked,
                             )
                             withContext(Dispatchers.Main) {
                                 dialog.dismiss()
@@ -250,14 +321,43 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     } else {
-                        Toast.makeText(this, "Please select x509.pem keystore!", Toast.LENGTH_SHORT)
+                        Toast.makeText(this, "Please select x509.pem Keystore!", Toast.LENGTH_SHORT)
                             .show()
                     }
                 } else {
-                    Toast.makeText(this, "Please select pk8 keystore!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Please select pk8 Keystore!", Toast.LENGTH_SHORT).show()
                 }
             } else {
                 Toast.makeText(this, "Please select APK File!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun jks2pem() {
+        binding.jksToPk8AndX509.setOnClickListener {
+            val jks = jksFile
+            if (jks != null && jks.exists()) {
+                val password = binding.password.text.toString().trim()
+                if (password.isNotEmpty()) {
+                    val aliasPassword = binding.aliasPassword.text.toString().trim()
+                    if (aliasPassword.isNotEmpty()) {
+                        JksToPem.convert(
+                            jks,
+                            password,
+                            aliasPassword,
+                            File(getExternalFilesDir(null), jks.name + ".pk8"),
+                            File(getExternalFilesDir(null), jks.name + ".x509.pem"),
+                        )
+                    } else {
+                        Toast.makeText(this, "Enter Alias Password!", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                } else {
+                    Toast.makeText(this, "Enter Password!", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else {
+                Toast.makeText(this, "Please select JKS Keystore!", Toast.LENGTH_SHORT).show()
             }
         }
     }

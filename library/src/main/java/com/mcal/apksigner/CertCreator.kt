@@ -12,10 +12,21 @@ import java.security.SecureRandom
 import java.security.cert.Certificate
 import java.util.Date
 
-/**
- * All methods create self-signed certificates.
- */
 object CertCreator {
+    const val KEY_ALGORITHM = "RSA"
+
+    const val SHA1_WITH_RSA = "SHA1withRSA"
+    const val SHA224_WITH_RSA = "SHA224withRSA"
+    const val SHA256_WITH_RSA = "SHA256withRSA"
+    const val SHA384_WITH_RSA = "SHA384withRSA"
+    const val SHA512_WITH_RSA = "SHA512withRSA"
+
+    const val KEY_SIZE_1024 = 1024
+    const val KEY_SIZE_2048 = 2048
+    const val KEY_SIZE_3072 = 3072
+
+    const val PROVIDER_BC = "BC"
+
     /**
      * Creates a new keystore and self-signed key.  The key will have the same password as the key, and will be
      * RSA 2048, with the cert signed using SHA1withRSA.  The certificate will have a validity of
@@ -34,8 +45,8 @@ object CertCreator {
         distinguishedNameValues: DistinguishedNameValues
     ) {
         createKeystoreAndKey(
-            storePath, password, "RSA", 2048, keyName, password,
-            "SHA1withRSA", 30, distinguishedNameValues
+            storePath, password, KEY_ALGORITHM, KEY_SIZE_2048, keyName, password,
+            SHA1_WITH_RSA, 30, distinguishedNameValues
         )
     }
 
@@ -79,7 +90,7 @@ object CertCreator {
      */
     @JvmStatic
     fun createKey(
-        storePath: String?,
+        storePath: String,
         storePass: CharArray,
         keyAlgorithm: String,
         keySize: Int,
@@ -136,7 +147,8 @@ object CertCreator {
             v3CertGen.setSubjectDN(principal)
             v3CertGen.setPublicKey(keyPair.public)
             v3CertGen.setSignatureAlgorithm(certSignatureAlgorithm)
-            val certificate = v3CertGen.generate(keyPair.private, "BC")
+            val certificate =
+                v3CertGen.generate(keyPair.private/*, PROVIDER_BC*/) // TODO: no such algorithm: SHA1withRSA for provider BC
             KeySet().apply {
                 name = keyName
                 privateKey = keyPair.private
