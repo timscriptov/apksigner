@@ -57,18 +57,14 @@ object ApkSigner {
             "--cert",
             x509File.path,
         )
-        if (v1SigningEnabled) {
-            args.add("--v1-signing-enabled")
-        }
-        if (v2SigningEnabled) {
-            args.add("--v2-signing-enabled")
-        }
-        if (v3SigningEnabled) {
-            args.add("--v3-signing-enabled")
-        }
-        if (v4SigningEnabled) {
-            args.add("--v4-signing-enabled")
-        }
+        args.add("--v1-signing-enabled")
+        args.add(v1SigningEnabled.toString())
+        args.add("--v2-signing-enabled")
+        args.add(v2SigningEnabled.toString())
+        args.add("--v3-signing-enabled")
+        args.add(v3SigningEnabled.toString())
+        args.add("--v4-signing-enabled")
+        args.add(v4SigningEnabled.toString())
         return try {
             ApkSignerTool.main(args.toTypedArray())
             true
