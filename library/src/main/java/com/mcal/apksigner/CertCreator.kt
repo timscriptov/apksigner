@@ -2,7 +2,7 @@ package com.mcal.apksigner
 
 import com.mcal.apksigner.utils.DistinguishedNameValues
 import com.mcal.apksigner.utils.KeySet
-import com.mcal.apksigner.utils.KeyStoreFileManager
+import com.mcal.apksigner.utils.KeyStoreHelper
 import org.spongycastle.x509.X509V3CertificateGenerator
 import java.io.File
 import java.io.IOException
@@ -13,46 +13,32 @@ import java.security.cert.Certificate
 import java.util.Date
 
 object CertCreator {
-    const val KEY_ALGORITHM = "RSA"
-
-    const val SHA1_WITH_RSA = "SHA1withRSA"
-    const val SHA224_WITH_RSA = "SHA224withRSA"
-    const val SHA256_WITH_RSA = "SHA256withRSA"
-    const val SHA384_WITH_RSA = "SHA384withRSA"
-    const val SHA512_WITH_RSA = "SHA512withRSA"
-
-    const val KEY_SIZE_1024 = 1024
-    const val KEY_SIZE_2048 = 2048
-    const val KEY_SIZE_3072 = 3072
-
-    const val PROVIDER_BC = "BC"
-
     /**
      * Creates a new keystore and self-signed key.  The key will have the same password as the key, and will be
      * RSA 2048, with the cert signed using SHA1withRSA.  The certificate will have a validity of
      * 30 years).
      *
-     * @param storePath               - pathname of the new keystore file
+     * @param keyFile               - new keystore file
      * @param password                - keystore and key password
      * @param keyName                 - the new key will have this as its alias within the keystore
      * @param distinguishedNameValues - contains Country, State, Locality,...,Common Name, etc.
      */
     @JvmStatic
     fun createKeystoreAndKey(
-        storePath: String,
+        keyFile: File,
         password: CharArray,
         keyName: String,
         distinguishedNameValues: DistinguishedNameValues
     ) {
         createKeystoreAndKey(
-            storePath, password, KEY_ALGORITHM, KEY_SIZE_2048, keyName, password,
-            SHA1_WITH_RSA, 30, distinguishedNameValues
+            keyFile, password, "RSA", 2048, keyName, password,
+            "SHA1withRSA", 30, distinguishedNameValues
         )
     }
 
     @JvmStatic
     fun createKeystoreAndKey(
-        storePath: String,
+        keyFile: File,
         storePass: CharArray,
         keyAlgorithm: String,
         keySize: Int,
@@ -67,16 +53,15 @@ object CertCreator {
                 keyAlgorithm, keySize, keyName, certSignatureAlgorithm, certValidityYears,
                 distinguishedNameValues
             )
-            val privateKS = KeyStoreFileManager.createKeyStore(storePath, storePass)
+            val privateKS = KeyStoreHelper.createKeyStore(keyFile, storePass)
             privateKS.setKeyEntry(
                 keyName, keySet.privateKey,
                 keyPass, arrayOf<Certificate>(keySet.publicKey)
             )
-            val storeFile = File(storePath)
-            if (storeFile.exists()) {
-                throw IOException("File already exists: $storePath")
+            if (keyFile.exists()) {
+                throw IOException("File already exists: $keyFile")
             }
-            KeyStoreFileManager.writeKeyStore(privateKS, storePath, storePass)
+            KeyStoreHelper.writeKeyStore(privateKS, keyFile, storePass)
             keySet
         } catch (x: RuntimeException) {
             throw x
@@ -90,7 +75,7 @@ object CertCreator {
      */
     @JvmStatic
     fun createKey(
-        storePath: String,
+        keyFile: File,
         storePass: CharArray,
         keyAlgorithm: String,
         keySize: Int,
@@ -105,12 +90,12 @@ object CertCreator {
                 keyAlgorithm, keySize, keyName, certSignatureAlgorithm, certValidityYears,
                 distinguishedNameValues
             )
-            val privateKS = KeyStoreFileManager.loadKeyStore(storePath, storePass)
+            val privateKS = KeyStoreHelper.createKeyStore(keyFile, storePass)
             privateKS.setKeyEntry(
                 keyName, keySet.privateKey,
                 keyPass, arrayOf<Certificate>(keySet.publicKey)
             )
-            KeyStoreFileManager.writeKeyStore(privateKS, storePath, storePass)
+            KeyStoreHelper.writeKeyStore(privateKS, keyFile, storePass)
             keySet
         } catch (x: RuntimeException) {
             throw x
@@ -148,7 +133,7 @@ object CertCreator {
             v3CertGen.setPublicKey(keyPair.public)
             v3CertGen.setSignatureAlgorithm(certSignatureAlgorithm)
             val certificate =
-                v3CertGen.generate(keyPair.private/*, PROVIDER_BC*/) // TODO: no such algorithm: SHA1withRSA for provider BC
+                v3CertGen.generate(keyPair.private/*, "BC" */)
             KeySet().apply {
                 name = keyName
                 privateKey = keyPair.private

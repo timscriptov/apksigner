@@ -9,9 +9,9 @@ import java.io.InputStream;
  */
 
 public class RequestFile {
-    private InputStream fileStream;
     private final String fileName;
     private final String mimeType;
+    private InputStream fileStream;
     private String requestName;
 
     public RequestFile(String fileName, String mimeType, InputStream fileStream) {
@@ -27,12 +27,12 @@ public class RequestFile {
         this.mimeType = mimeType;
     }
 
-    public void setRequestName(String requestName) {
-        this.requestName = requestName;
-    }
-
     public InputStream getFileStream() {
         return fileStream;
+    }
+
+    public void setFileStream(InputStream fileStream) {
+        this.fileStream = fileStream;
     }
 
     public String getFileName() {
@@ -47,8 +47,8 @@ public class RequestFile {
         return requestName;
     }
 
-    public void setFileStream(InputStream fileStream) {
-        this.fileStream = fileStream;
+    public void setRequestName(String requestName) {
+        this.requestName = requestName;
     }
 
     @NonNull

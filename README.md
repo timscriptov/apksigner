@@ -1,5 +1,7 @@
 [![](https://jitpack.io/v/TimScriptov/apksigner.svg)](https://jitpack.io/#TimScriptov/apksigner)
 
+# ApkSigner library Multiplatform
+
 ## Add it in your root build.gradle at the end of repositories:
 ```groovy
     allprojects {
@@ -41,31 +43,52 @@
 
 ## Convert jks to bks
 ```kotlin
-    JksToBks.convert(File("path/key.jks"), File("path/key.bks"), "password", "alias_password")
-    JksToBks.convert(File("path/key.jks"), File("path/key.bks"), "password", "alias", "alias_password")
+    CertConverter.convert(File("path/key.jks"), File("path/key.bks"), "password", "alias_password")
+    CertConverter.convert(File("path/key.jks"), File("path/key.bks"), "password", "alias", "alias_password")
 ```
 
 ```java
-    JksToBks.convert(new File("path/key.jks"), new File("path/key.bks"), "password", "alias_password");
-    JksToBks.convert(new File("path/key.jks"), new File("path/key.bks"), "password", "alias", "alias_password");
+    CertConverter.convert(new File("path/key.jks"), new File("path/key.bks"), "password", "alias_password");
+    CertConverter.convert(new File("path/key.jks"), new File("path/key.bks"), "password", "alias", "alias_password");
 ```
 
-## Convert jks to pk8 and x509.pem
+## Convert bks to jks
 ```kotlin
-    JksToPem.convert(File("path/key.jks"), "password", "alias_password", File("path/key.pk8"), File("path/key.x509.pem"))
-    JksToPem.convert(File("path/key.jks"), "password", "alias", "alias_password", File("path/key.pk8"), File("path/key.x509.pem"))
+    CertConverter.convert(File("path/key.bks"), File("path/key.jks"), "password", "alias_password")
+    CertConverter.convert(File("path/key.bks"), File("path/key.jks"), "password", "alias", "alias_password")
 ```
 
 ```java
-    JksToPem.convert(new File("path/key.jks"), "password", "alias_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
-    JksToPem.convert(new File("path/key.jks"), "password", "alias", "alias_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
+    CertConverter.convert(new File("path/key.jks"), new File("path/key.bks"), "password", "alias_password");
+    CertConverter.convert(new File("path/key.jks"), new File("path/key.bks"), "password", "alias", "alias_password");
+```
+
+## Convert jks/bks to pk8 and x509.pem
+```kotlin
+    CertConverter.convert(File("path/key.jks"), "password", "alias_password", File("path/key.pk8"), File("path/key.x509.pem"))
+    CertConverter.convert(File("path/key.jks"), "password", "alias", "alias_password", File("path/key.pk8"), File("path/key.x509.pem"))
+
+    CertConverter.convert(File("path/key.bks"), "password", "alias_password", File("path/key.pk8"), File("path/key.x509.pem"))
+    CertConverter.convert(File("path/key.bks"), "password", "alias", "alias_password", File("path/key.pk8"), File("path/key.x509.pem"))
+```
+
+```java
+    CertConverter.convert(new File("path/key.jks"), "password", "alias_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
+    CertConverter.convert(new File("path/key.jks"), "password", "alias", "alias_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
+
+    CertConverter.convert(new File("path/key.bks"), "password", "alias_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
+    CertConverter.convert(new File("path/key.bks"), "password", "alias", "alias_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
 ```
 
 ## Create keystore
 ```kotlin
     CertCreator.createKeystoreAndKey("path/key.jks", "password", "alias", DistinguishedNameValues())
+
+    CertCreator.createKeystoreAndKey("path/key.bks", "password", "alias", DistinguishedNameValues())
 ```
 
 ```java
     CertCreator.createKeystoreAndKey("path/key.jks", "password", "alias", new DistinguishedNameValues());
+
+    CertCreator.createKeystoreAndKey("path/key.bks", "password", "alias", new DistinguishedNameValues());
 ```

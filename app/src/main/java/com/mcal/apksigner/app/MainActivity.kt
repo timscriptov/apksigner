@@ -13,9 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mcal.apksigner.ApkSigner
+import com.mcal.apksigner.CertConverter
 import com.mcal.apksigner.CertCreator
-import com.mcal.apksigner.JksToBks
-import com.mcal.apksigner.JksToPem
 import com.mcal.apksigner.app.databinding.ActivityMainBinding
 import com.mcal.apksigner.app.filepicker.FilePickHelper
 import com.mcal.apksigner.utils.DistinguishedNameValues
@@ -158,7 +157,7 @@ class MainActivity : AppCompatActivity() {
                                                     File(
                                                         getExternalFilesDir(null),
                                                         "$alias.jks"
-                                                    ).path,
+                                                    ),
                                                     password.toCharArray(),
                                                     alias,
                                                     DistinguishedNameValues().apply {
@@ -276,7 +275,7 @@ class MainActivity : AppCompatActivity() {
             if (jks != null && jks.exists()) {
                 val aliasPassword = binding.aliasPassword.text.toString().trim()
                 if (aliasPassword.isNotEmpty()) {
-                    JksToBks.convert(
+                    CertConverter.convert(
                         jks,
                         File(getExternalFilesDir(null), jks.name + ".bks"),
                         aliasPassword,
@@ -341,7 +340,7 @@ class MainActivity : AppCompatActivity() {
                 if (password.isNotEmpty()) {
                     val aliasPassword = binding.aliasPassword.text.toString().trim()
                     if (aliasPassword.isNotEmpty()) {
-                        JksToPem.convert(
+                        CertConverter.convert(
                             jks,
                             password,
                             aliasPassword,

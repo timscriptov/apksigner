@@ -2,7 +2,7 @@ package com.mcal.apksigner
 
 import com.android.apksig.ApkSigner
 import com.android.apksigner.ApkSignerTool
-import com.mcal.apksigner.utils.KeyStoreFileManager
+import com.mcal.apksigner.utils.KeyStoreHelper
 import java.io.File
 import java.security.PrivateKey
 import java.security.cert.X509Certificate
@@ -84,7 +84,7 @@ object ApkSigner {
         aliasPassword: String,
     ): Boolean {
         return try {
-            val keystore = KeyStoreFileManager.loadKeyStore(keyFile.path, password.toCharArray())
+            val keystore = KeyStoreHelper.loadKeyStore(keyFile, password.toCharArray())
             ApkSigner.Builder(
                 listOf(
                     ApkSigner.SignerConfig.Builder(
@@ -118,7 +118,7 @@ object ApkSigner {
         v4SigningEnabled: Boolean,
     ): Boolean {
         return try {
-            val keystore = KeyStoreFileManager.loadKeyStore(keyFile.path, password.toCharArray())
+            val keystore = KeyStoreHelper.loadKeyStore(keyFile, password.toCharArray())
             ApkSigner.Builder(
                 listOf(
                     ApkSigner.SignerConfig.Builder(
