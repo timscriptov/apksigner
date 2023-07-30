@@ -153,22 +153,32 @@ class MainActivity : AppCompatActivity() {
                                             val commonName =
                                                 binding.commonName.text.toString().trim()
                                             if (commonName.isNotEmpty()) {
-                                                CertCreator.createKeystoreAndKey(
-                                                    File(
+                                                val dialog = dialog().apply {
+                                                    show()
+                                                }
+                                                CoroutineScope(Dispatchers.IO).launch {
+                                                    val outKeyFile = File(
                                                         getExternalFilesDir(null),
                                                         "$alias.jks"
-                                                    ),
-                                                    password.toCharArray(),
-                                                    alias,
-                                                    DistinguishedNameValues().apply {
-                                                        setCountry(country)
-                                                        setState(state)
-                                                        setLocality(locality)
-                                                        setStreet(street)
-                                                        setOrganization(organization)
-                                                        setOrganizationalUnit(organizationalUnit)
-                                                        setCommonName(commonName)
-                                                    })
+                                                    )
+                                                    CertCreator.createKeystoreAndKey(
+                                                        outKeyFile,
+                                                        password.toCharArray(),
+                                                        alias,
+                                                        DistinguishedNameValues().apply {
+                                                            setCountry(country)
+                                                            setState(state)
+                                                            setLocality(locality)
+                                                            setStreet(street)
+                                                            setOrganization(organization)
+                                                            setOrganizationalUnit(organizationalUnit)
+                                                            setCommonName(commonName)
+                                                        })
+                                                    withContext(Dispatchers.Main) {
+                                                        dialog.dismiss()
+                                                        dialog("Created ${outKeyFile.path}!")
+                                                    }
+                                                }
                                             } else {
                                                 Toast.makeText(
                                                     this,
@@ -233,9 +243,11 @@ class MainActivity : AppCompatActivity() {
                                     show()
                                 }
                                 CoroutineScope(Dispatchers.IO).launch {
+                                    val outputApkFile =
+                                        File(getExternalFilesDir(null), "app_signed.apk")
                                     ApkSigner.sign(
                                         apk,
-                                        File(getExternalFilesDir(null), "app_signed.apk"),
+                                        outputApkFile,
                                         jks,
                                         password,
                                         alias,
@@ -248,6 +260,7 @@ class MainActivity : AppCompatActivity() {
                                     withContext(Dispatchers.Main) {
                                         dialog.dismiss()
                                         setEnabled(view, true)
+                                        dialog("Signed ${outputApkFile.path}!")
                                     }
                                 }
                             } else {
@@ -275,12 +288,22 @@ class MainActivity : AppCompatActivity() {
             if (jks != null && jks.exists()) {
                 val aliasPassword = binding.aliasPassword.text.toString().trim()
                 if (aliasPassword.isNotEmpty()) {
-                    CertConverter.convert(
-                        jks,
-                        File(getExternalFilesDir(null), jks.name + ".bks"),
-                        aliasPassword,
-                        aliasPassword
-                    )
+                    val dialog = dialog().apply {
+                        show()
+                    }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val outKeyFile = File(getExternalFilesDir(null), jks.name + ".bks")
+                        CertConverter.convert(
+                            jks,
+                            outKeyFile,
+                            aliasPassword,
+                            aliasPassword
+                        )
+                        withContext(Dispatchers.Main) {
+                            dialog.dismiss()
+                            dialog("Converted ${outKeyFile.path}!")
+                        }
+                    }
                 } else {
                     Toast.makeText(this, "Enter Alias Password!", Toast.LENGTH_SHORT)
                         .show()
@@ -304,9 +327,10 @@ class MainActivity : AppCompatActivity() {
                             show()
                         }
                         CoroutineScope(Dispatchers.IO).launch {
+                            val outputApkFile = File(getExternalFilesDir(null), "app_signed.apk")
                             ApkSigner.sign(
                                 apk,
-                                File(getExternalFilesDir(null), "app_signed.apk"),
+                                outputApkFile,
                                 pk8,
                                 x509,
                                 binding.v1SigningEnabled.isChecked,
@@ -317,6 +341,7 @@ class MainActivity : AppCompatActivity() {
                             withContext(Dispatchers.Main) {
                                 dialog.dismiss()
                                 setEnabled(view, true)
+                                dialog("Signed ${outputApkFile.path}!")
                             }
                         }
                     } else {
@@ -340,13 +365,24 @@ class MainActivity : AppCompatActivity() {
                 if (password.isNotEmpty()) {
                     val aliasPassword = binding.aliasPassword.text.toString().trim()
                     if (aliasPassword.isNotEmpty()) {
-                        CertConverter.convert(
-                            jks,
-                            password,
-                            aliasPassword,
-                            File(getExternalFilesDir(null), jks.name + ".pk8"),
-                            File(getExternalFilesDir(null), jks.name + ".x509.pem"),
-                        )
+                        val dialog = dialog().apply {
+                            show()
+                        }
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val pk8File = File(getExternalFilesDir(null), jks.name + ".pk8")
+                            val pemFile = File(getExternalFilesDir(null), jks.name + ".x509.pem")
+                            CertConverter.convert(
+                                jks,
+                                password,
+                                aliasPassword,
+                                pk8File,
+                                pemFile,
+                            )
+                            withContext(Dispatchers.Main) {
+                                dialog.dismiss()
+                                dialog("Converted ${jks.path} to ${pk8File.path} and ${pemFile.path}!")
+                            }
+                        }
                     } else {
                         Toast.makeText(this, "Enter Alias Password!", Toast.LENGTH_SHORT)
                             .show()
@@ -384,6 +420,13 @@ class MainActivity : AppCompatActivity() {
                 })
             })
         }.create()
+    }
+
+    private fun dialog(message: String) {
+        MaterialAlertDialogBuilder(this).apply {
+            setMessage(message)
+            setPositiveButton(android.R.string.ok, null)
+        }.show()
     }
 
     private fun setVisibility(view: View, mode: Int) {
