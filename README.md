@@ -1,6 +1,11 @@
 [![](https://jitpack.io/v/TimScriptov/apksigner.svg)](https://jitpack.io/#TimScriptov/apksigner)
 
 # ApkSigner library Multiplatform
+1. Sign with jks/bks, pk8 + x509.pem
+2. Convert jks to bks, bks to jks, jks/bks to pk8 + x509.pem
+3. Validate password
+4. Create jks/bks
+
 
 ## Add it in your root build.gradle at the end of repositories:
 ```groovy
@@ -97,4 +102,17 @@
     CertCreator.createKeystoreAndKey("path/key.jks", "password", "alias", new DistinguishedNameValues());
 
     CertCreator.createKeystoreAndKey("path/key.bks", "password", "alias", new DistinguishedNameValues());
+```
+
+## Validate password jks/bks
+```kotlin
+    KeyStoreHelper.validateKeystorePassword("path/key.jks", "password")
+
+    KeyStoreHelper.validateKeystorePassword("path/key.bks", "password")
+```
+
+```java
+    KeyStoreHelper.validateKeystorePassword("path/key.jks", "password", "alias");
+
+    KeyStoreHelper.validateKeystorePassword("path/key.bks", "password", "alias");
 ```
