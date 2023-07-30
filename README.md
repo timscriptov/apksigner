@@ -30,15 +30,21 @@
     ApkSigner.sign(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"), new File("path/key.pk8"), new File("path/key.x509.pem"), true/*v1SigningEnabled*/, true/*v2SigningEnabled*/, true/*v3SigningEnabled*/, false/*v4SigningEnabled*/);
 ```
 
-## Sign apk with jks
+## Sign apk with jks/bks
 ```kotlin
     ApkSigner.sign(File("path/unsigned_apk.apk"), File("path/signed_apk.apk"), File("path/key.jks"), "cert_pass", "cert_alias", "key_pass")
     ApkSigner.sign(File("path/unsigned_apk.apk"), File("path/signed_apk.apk"), File("path/key.jks"), "cert_pass", "cert_alias", "key_pass", true/*v1SigningEnabled*/, true/*v2SigningEnabled*/, true/*v3SigningEnabled*/, false/*v4SigningEnabled*/)
+
+    ApkSigner.sign(File("path/unsigned_apk.apk"), File("path/signed_apk.apk"), File("path/key.bks"), "cert_pass", "cert_alias", "key_pass")
+    ApkSigner.sign(File("path/unsigned_apk.apk"), File("path/signed_apk.apk"), File("path/key.bks"), "cert_pass", "cert_alias", "key_pass", true/*v1SigningEnabled*/, true/*v2SigningEnabled*/, true/*v3SigningEnabled*/, false/*v4SigningEnabled*/)
 ```
 
 ```java
     ApkSigner.sign(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"), new File("path/key.jks"), "cert_pass", "cert_alias", "key_pass");
     ApkSigner.sign(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"), new File("path/key.jks"), "cert_pass", "cert_alias", "key_pass", true/*v1SigningEnabled*/, true/*v2SigningEnabled*/, true/*v3SigningEnabled*/, false/*v4SigningEnabled*/);
+
+    ApkSigner.sign(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"), new File("path/key.bks"), "cert_pass", "cert_alias", "key_pass");
+    ApkSigner.sign(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"), new File("path/key.bks"), "cert_pass", "cert_alias", "key_pass", true/*v1SigningEnabled*/, true/*v2SigningEnabled*/, true/*v3SigningEnabled*/, false/*v4SigningEnabled*/);
 ```
 
 ## Convert jks to bks
@@ -80,7 +86,7 @@
     CertConverter.convert(new File("path/key.bks"), "password", "alias", "alias_password", new File("path/key.pk8"), new File("path/key.x509.pem"));
 ```
 
-## Create keystore
+## Create jks/bks
 ```kotlin
     CertCreator.createKeystoreAndKey("path/key.jks", "password", "alias", DistinguishedNameValues())
 
