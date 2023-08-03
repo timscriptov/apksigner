@@ -245,17 +245,17 @@ class MainActivity : AppCompatActivity() {
                                 CoroutineScope(Dispatchers.IO).launch {
                                     val outputApkFile =
                                         File(getExternalFilesDir(null), "app_signed.apk")
-                                    ApkSigner.sign(
-                                        apk,
-                                        outputApkFile,
+                                    ApkSigner(apk, outputApkFile).apply {
+                                        useDefaultSignatureVersion = false
+                                        v1SigningEnabled = binding.v1SigningEnabled.isChecked
+                                        v2SigningEnabled = binding.v2SigningEnabled.isChecked
+                                        v3SigningEnabled = binding.v3SigningEnabled.isChecked
+                                        v4SigningEnabled = binding.v4SigningEnabled.isChecked
+                                    }.signRelease(
                                         jks,
                                         password,
                                         alias,
                                         aliasPassword,
-                                        binding.v1SigningEnabled.isChecked,
-                                        binding.v2SigningEnabled.isChecked,
-                                        binding.v3SigningEnabled.isChecked,
-                                        binding.v4SigningEnabled.isChecked,
                                     )
                                     withContext(Dispatchers.Main) {
                                         dialog.dismiss()
@@ -328,15 +328,15 @@ class MainActivity : AppCompatActivity() {
                         }
                         CoroutineScope(Dispatchers.IO).launch {
                             val outputApkFile = File(getExternalFilesDir(null), "app_signed.apk")
-                            ApkSigner.sign(
-                                apk,
-                                outputApkFile,
+                            ApkSigner(apk, outputApkFile).apply {
+                                useDefaultSignatureVersion = false
+                                v1SigningEnabled = binding.v1SigningEnabled.isChecked
+                                v2SigningEnabled = binding.v2SigningEnabled.isChecked
+                                v3SigningEnabled = binding.v3SigningEnabled.isChecked
+                                v4SigningEnabled = binding.v4SigningEnabled.isChecked
+                            }.signRelease(
                                 pk8,
                                 x509,
-                                binding.v1SigningEnabled.isChecked,
-                                binding.v2SigningEnabled.isChecked,
-                                binding.v3SigningEnabled.isChecked,
-                                binding.v4SigningEnabled.isChecked,
                             )
                             withContext(Dispatchers.Main) {
                                 dialog.dismiss()
