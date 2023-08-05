@@ -26,30 +26,73 @@
 
 ## Sign apk with pk8 and x509.pem
 ```kotlin
-    ApkSigner.sign(File("path/unsigned_apk.apk"), File("path/signed_apk.apk"), File("path/key.pk8"), File("path/key.x509.pem"))
-    ApkSigner.sign(File("path/unsigned_apk.apk"), File("path/signed_apk.apk"), File("path/key.pk8"), File("path/key.x509.pem"), true/*v1SigningEnabled*/, true/*v2SigningEnabled*/, true/*v3SigningEnabled*/, false/*v4SigningEnabled*/);
+ApkSigner(File("path/unsigned_apk.apk"), File("path/signed_apk.apk")).apply {
+    useDefaultSignatureVersion = false
+    v1SigningEnabled = true
+    v2SigningEnabled = true
+    v3SigningEnabled = true
+    v4SigningEnabled = false
+}.signRelease(
+    File("path/key.pk8"),
+    File("path/key.x509.pem"),
+)
 ```
 
 ```java
-    ApkSigner.sign(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"), new File("path/key.pk8"), new File("path/key.x509.pem"));
-    ApkSigner.sign(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"), new File("path/key.pk8"), new File("path/key.x509.pem"), true/*v1SigningEnabled*/, true/*v2SigningEnabled*/, true/*v3SigningEnabled*/, false/*v4SigningEnabled*/);
+final ApkSigner signer = new ApkSigner(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"));
+signer.setUseDefaultSignatureVersion(false);
+signer.setV1SigningEnabled(true);
+signer.setV2SigningEnabled(true);
+signer.setV3SigningEnabled(true);
+signer.setV4SigningEnabled(false);
+signer.signRelease(new File("path/key.pk8"), new File("path/key.x509.pem"));
 ```
 
 ## Sign apk with jks/bks
 ```kotlin
-    ApkSigner.sign(File("path/unsigned_apk.apk"), File("path/signed_apk.apk"), File("path/key.jks"), "cert_pass", "cert_alias", "key_pass")
-    ApkSigner.sign(File("path/unsigned_apk.apk"), File("path/signed_apk.apk"), File("path/key.jks"), "cert_pass", "cert_alias", "key_pass", true/*v1SigningEnabled*/, true/*v2SigningEnabled*/, true/*v3SigningEnabled*/, false/*v4SigningEnabled*/)
-
-    ApkSigner.sign(File("path/unsigned_apk.apk"), File("path/signed_apk.apk"), File("path/key.bks"), "cert_pass", "cert_alias", "key_pass")
-    ApkSigner.sign(File("path/unsigned_apk.apk"), File("path/signed_apk.apk"), File("path/key.bks"), "cert_pass", "cert_alias", "key_pass", true/*v1SigningEnabled*/, true/*v2SigningEnabled*/, true/*v3SigningEnabled*/, false/*v4SigningEnabled*/)
+ApkSigner(File("path/unsigned_apk.apk"), File("path/signed_apk.apk")).apply {
+    useDefaultSignatureVersion = false
+    v1SigningEnabled = true
+    v2SigningEnabled = true
+    v3SigningEnabled = true
+    v4SigningEnabled = false
+}.signRelease(
+    File("path/key.jks or key.bks"),
+    "cert_pass",
+    "cert_alias",
+    "key_pass",
+)
 ```
 
 ```java
-    ApkSigner.sign(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"), new File("path/key.jks"), "cert_pass", "cert_alias", "key_pass");
-    ApkSigner.sign(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"), new File("path/key.jks"), "cert_pass", "cert_alias", "key_pass", true/*v1SigningEnabled*/, true/*v2SigningEnabled*/, true/*v3SigningEnabled*/, false/*v4SigningEnabled*/);
+final ApkSigner signer = new ApkSigner(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"));
+signer.setUseDefaultSignatureVersion(false);
+signer.setV1SigningEnabled(true);
+signer.setV2SigningEnabled(true);
+signer.setV3SigningEnabled(true);
+signer.setV4SigningEnabled(false);
+signer.signRelease(new File("path/key.jks or key.bks"), "cert_pass", "cert_alias", "key_pass");
+```
 
-    ApkSigner.sign(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"), new File("path/key.bks"), "cert_pass", "cert_alias", "key_pass");
-    ApkSigner.sign(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"), new File("path/key.bks"), "cert_pass", "cert_alias", "key_pass", true/*v1SigningEnabled*/, true/*v2SigningEnabled*/, true/*v3SigningEnabled*/, false/*v4SigningEnabled*/);
+## Sign apk with testkey
+```kotlin
+ApkSigner(File("path/unsigned_apk.apk"), File("path/signed_apk.apk")).apply {
+    useDefaultSignatureVersion = false
+    v1SigningEnabled = true
+    v2SigningEnabled = true
+    v3SigningEnabled = true
+    v4SigningEnabled = false
+}.signDebug()
+```
+
+```java
+final ApkSigner signer = new ApkSigner(new File("path/unsigned_apk.apk"), new File("path/signed_apk.apk"));
+signer.setUseDefaultSignatureVersion(false);
+signer.setV1SigningEnabled(true);
+signer.setV2SigningEnabled(true);
+signer.setV3SigningEnabled(true);
+signer.setV4SigningEnabled(false);
+signer.signDebug();
 ```
 
 ## Convert jks to bks
